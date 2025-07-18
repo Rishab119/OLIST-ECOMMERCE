@@ -1,1 +1,16 @@
+1.Top 5 customers by total spending
+  select customer_id,sum(price + freight_value) as total_spent
+  from orders o 
+  join order_items oi using(order_id)
+ where o.order_status = "delivered"
+ group by customer_id
+ order by total_spent desc
+ limit 5;
 
+2.Which states have most active customers
+   select customer_state,count(distinct customer_id) as customer_count
+  from customers
+  group by customer_state
+  order by customer_count desc;
+
+3.Avg no. of item per order
