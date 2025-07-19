@@ -14,3 +14,32 @@
   order by customer_count desc;
 
 3.Avg no. of item per order
+select avg(items_per_order) as avg_items
+from ( select order_id,count(*) as items_per_order
+from order_items 
+group by order_id
+)  sub;
+
+4. Repeat vs one-time customers count
+select
+case when order_count = 1  then 'One-time' else 'Repeat' end as customer_type,
+count(*) as customer_count
+from (
+select customer_id,count(order_id) as order_count
+from  orders
+group by customer_id
+) sub
+group by  customer_type;
+
+5.Distribution of order status(delivered,cancelled,etc.)
+select order_status,count(*) as order_count
+from orders
+group by order_status;
+
+
+
+
+
+
+
+
