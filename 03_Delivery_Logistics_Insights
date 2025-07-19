@@ -1,1 +1,28 @@
+ 1.Avg Delivery time
+select avg(DATE('day',order_delivered_customer_date-order_purchase_timestamp)) as  avg_delivery_days
+from orders
+where order_status = 'delivered'
+
+2.Top Fastest & Lowest product categories by delivery time
+select pct.product_category_name_english , AVG(DATE(o.order_delivered_customer_date -o.order_purchase_timestamp)) as avg_delivery_time
+from orders o 
+join order_items oi using(order_id)
+join products p using(product_id)
+join product_category pct on p.product_category_name = pct.product_category_name
+where o.order_status =  'delivered'
+group by pct.product_category_name_english
+order by avg_delivery_time asc;
+
+3.Orders with delayed delivery beyond estimated time
+select order_id
+from orders
+where order_delivered_customer_date > order_estimated_delivery_date;
+
+4.Month-wise trend of Delivery delays
+select month(order_purchase_timestamp) as monthy,count(*) as delayed_orders
+from orders
+where order_delivered_customer_date > order_estimated_delivery_date
+group by monthy
+order by monthy;
+
 
