@@ -1,1 +1,23 @@
+1.Breakdown of payment methods by customers
+select payment_type ,COUNT(*) as count
+from order_payments
+group by payment_type;
 
+2.Avg.payment amount by method
+select payment_type,AVG(payment_value) as avg_payment
+from order_payments
+group by payment_type
+
+3.Highest single order payment ever made
+select order_id,sum(payment_value) as total_payment
+from order_payments
+group by order_id
+order  by total_payment desc
+limit 1;
+
+4.Customers using multiple payment methods
+select customer_id
+from orders o
+join order_payments op using(order_id)
+group by customer_id
+having count(distinct payment_type) > 1;
