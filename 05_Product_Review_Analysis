@@ -1,4 +1,43 @@
 1.Top 10 products by no.of reviews
+select product_id , count(*) as review_count
+from orders o 
+join order_reviews r using(order_id)
+join order_items oi using(order_id)
+group by product_id
+order by review_count desc
+limit 10;
+
+2.Product Categories with highest and lowest avg.ratings
+select pct.product_category_name_english, AVG(review_score) as avg_rating
+from order_reviews r 
+join orders o using(order_id)
+join order_items oi using(order_id)
+join products p using(product_id)
+join product_category pct on p.product_category_name = pct.product_category_name
+group by pct.product_category_name_english
+order by avg_rating desc;
+
+3. 5-Star review count v/s  1-star review count trend over time
+select month(review_creation_date) as monthy,
+SUM(case when review_score = 5 then  1 else 0 end) as five_star,
+SUM(case when review_score = 1  then 1 else 0 end) as one_star
+from order_reviews
+group by monthy
+order by monthy;
+
+4.Avg.rating per product
+select product_id,avg(review_score) as avg_rating
+from order_reviews r 
+join orders o using(order_id)
+join order_items oi using(order_id)
+group by product_id;
+
+
+
+
+
+
+
 
 
 
