@@ -1,1 +1,37 @@
+1.Rank products by  revenue within each category
+select *,rank() over(partition by category order by revenue desc) as rank_in_category
+from (
+select p.product_id,pct.product_category_name_english as category,sum(oi.price) as revenue
+from order_items oi 
+join products p using(product_id)
+join product_category pct on p.product_category_name = pct.product_category_name
+join orders o using(order_id)
+where o.order_status = 'delivered'
+group by p.product_id,category
+) sub;
+
+2.Calculate monthly revenue and cumulative revenue using SUM()  OVER(PARTITION BY) 
+select month(o.order_purchase_timestamp) as monthy,
+sum(oi.price + oi.freight_value) as monthly_revenue,
+sum(sum(oi.price+oi.freight_value)) over(order by month(o.order_purchase_timestamp)) as cumulative_revenue
+from orders o
+join order_items oi using(order_id)
+where o.order_status = 'delivered'
+group by monthy
+order by monthy;
+
+3.Use LAG() to check if customer spending increase or decrease from previous months 
+SELECT *, total_spending - LAG(total_spending) OVER (PARTITION BY customer_id ORDER BY monthy) AS spending_diff
+FROM (
+  SELECT customer_id, month( o.order_purchase_timestamp) AS monthy,
+         SUM(oi.price + oi.freight_value) AS total_spending
+  FROM orders o
+  JOIN order_items oi USING(order_id)
+  WHERE o.order_status = 'delivered'
+  GROUP BY customer_id, monthy
+) sub;
+
+
+
+
 
